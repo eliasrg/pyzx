@@ -149,7 +149,7 @@ class QASMParser(object):
                 for g in circ.gates:
                     gates.append(g.reposition(argset))
                 continue
-            if name in ("x", "z", "s", "t", "h", "sdg", "tdg"):
+            if name in ("x", "z", "s", "t", "h", "sdg", "tdg", "nonunitary"):
                 if name in ("sdg", "tdg"): g = qasm_gate_table[name](argset[0],adjoint=True)
                 else: g = qasm_gate_table[name](argset[0])
                 gates.append(g)

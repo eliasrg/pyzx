@@ -196,6 +196,13 @@ class Optimizer:
         self.hadamards.remove(t)
         self.available[t] = list()
         self.availty[t] = 1
+
+    def add_nonunitary(self, g, t):
+        g.index = self.gcount
+        self.gcount += 1
+        self.gates[t].append(g)
+        self.available[t] = list()
+        self.availty[t] = 1
     
     def add_gate(self, t, g):
         """Helper function for ``add_cz`` and ``add_cnot`` to add a single qubit gate to the output."""
@@ -463,6 +470,8 @@ class Optimizer:
                 self.add_hadamard(c)
                 self.add_cnot(g)
         
+        elif g.name == "Nonunitary":
+            self.add_nonunitary(g, t)
         else:
             raise TypeError("Unknown gate {}".format(str(g)))
 

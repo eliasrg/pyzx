@@ -445,6 +445,28 @@ class CCZ(Tofolli):
                 CNOT(c1,t), T(c2), T(t), CNOT(c1,c2),T(c1),
                 T(c2,adjoint=True),CNOT(c1,c2)]
 
+class Nonunitary(Gate):
+    """A placeholder for any single-qubit nonunitary gate. Acts as a barrier
+    for optimizations."""
+    name = "Nonunitary"
+    quippername = "undefined"
+    qasm_name = "nonunitary"
+    qc_name = "undefined"
+    printphase = False
+
+    def __init__(self, target, stored_data=None):
+        self.target = target
+        self.phase = 0.5 # A zero phase will be optimized away
+        self.stored_data = stored_data
+
+    def to_graph(self, g, labels, qs, rs):
+        node_type = 'nonunitary'
+        qubit_index = 0
+        row_index = rs[self.target] # Row index
+        v = self.graph_add_node(g, labels, qs, node_type, qubit_index,
+                                row_index, self.phase)
+        g.stored_data[v] = self.stored_data
+
 gate_types = {
     "XPhase": XPhase,
     "NOT": NOT,
@@ -461,7 +483,8 @@ gate_types = {
     "TOF": Tofolli,
     "CCZ": CCZ,
     "InitAncilla": InitAncilla,
-    "PostSelect": PostSelect
+    "PostSelect": PostSelect,
+    "Nonunitary": Nonunitary
 }
 
 qasm_gate_table = {
@@ -477,4 +500,5 @@ qasm_gate_table = {
     "cz": CZ,
     "ccx": Tofolli,
     "ccz": CCZ,
+    "nonunitary": Nonunitary,
 }

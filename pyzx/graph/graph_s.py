@@ -37,6 +37,7 @@ class GraphS(BaseGraph):
 		self._maxr = -1
 		
 		self._vdata = dict()
+		self.stored_data = dict()
 		
 
 	def vindex(self): return self._vindex

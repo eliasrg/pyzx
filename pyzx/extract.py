@@ -27,7 +27,7 @@ from .graph import Graph
 from .simplify import id_simp, tcount
 from .rules import apply_rule, pivot, match_spider_parallel, spider
 from .circuit import Circuit
-from .circuit.gates import ParityPhase, CNOT, HAD, ZPhase, CZ, InitAncilla
+from .circuit.gates import ParityPhase, CNOT, HAD, ZPhase, CZ, InitAncilla, Nonunitary
 
 
 def bi_adj(g, vs, ws):
@@ -158,7 +158,10 @@ def streaming_extract(g, allow_ancillae=False, quiet=True, stopcount=-1):
             if phase != 0:
                 if phase.denominator > 2: nodesparsed += 1
                 if t == 1: c.add_gate("ZPhase", q, phase=phase)
-                else: c.add_gate("XPhase", q, phase=phase)
+                elif t == 0: c.add_gate("XPhase", q, phase=phase)
+                else:
+                    assert t == 'nonunitary'
+                    c.add_gate(Nonunitary(q, g.stored_data[v]))
                 g.set_phase(v, 0)
         for v in left:
             q = qs[v]
