@@ -160,7 +160,7 @@ def streaming_extract(g, allow_ancillae=False, quiet=True, stopcount=-1):
                 if t == 1: c.add_gate("ZPhase", q, phase=phase)
                 elif t == 0: c.add_gate("XPhase", q, phase=phase)
                 else:
-                    assert t == 'nonunitary'
+                    assert 'nonunitary' in t
                     c.add_gate(Nonunitary(q, g.stored_data[v]))
                 g.set_phase(v, 0)
         for v in left:
