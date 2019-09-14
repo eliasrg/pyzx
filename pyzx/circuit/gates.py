@@ -454,13 +454,16 @@ class Nonunitary(Gate):
     qc_name = "undefined"
     printphase = False
 
+    index = 0
+
     def __init__(self, target, stored_data=None):
         self.target = target
         self.phase = 0.5 # A zero phase will be optimized away
         self.stored_data = stored_data
 
     def to_graph(self, g, labels, qs, rs):
-        node_type = 'nonunitary'
+        node_type = 'nonunitary_{}'.format(self.__class__.index)
+        self.__class__.index += 1
         qubit_index = 0
         row_index = rs[self.target] # Row index
         v = self.graph_add_node(g, labels, qs, node_type, qubit_index,
