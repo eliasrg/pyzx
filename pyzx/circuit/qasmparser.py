@@ -197,6 +197,7 @@ class QASMParser(object):
                     if val_1.find('pi') == -1: raise TypeError("Invalid specification {}".format(name))
                     val_1 = val_1.replace('pi', '')
                     val_1 = val_1.replace('*','')
+                    if val_1.strip() == '': val_1 = '1'
                     try: phase_1 = float(val_1)
                     except: raise TypeError("Invalid specification {}".format(name))
                 try:
@@ -205,6 +206,7 @@ class QASMParser(object):
                     if val_2.find('pi') == -1: raise TypeError("Invalid specification {}".format(name))
                     val_2 = val_2.replace('pi', '')
                     val_2 = val_2.replace('*','')
+                    if val_2.strip() == '': val_2 = '1'
                     try: phase_2 = float(val_2)
                     except: raise TypeError("Invalid specification {}".format(name))
                 try:
@@ -213,6 +215,7 @@ class QASMParser(object):
                     if val_3.find('pi') == -1: raise TypeError("Invalid specification {}".format(name))
                     val_3 = val_3.replace('pi', '')
                     val_3 = val_3.replace('*','')
+                    if val_3.strip() == '': val_3 = '1'
                     try: phase_3 = float(val_3)
                     except: raise TypeError("Invalid specification {}".format(name))
                 phase_1 = Fraction(phase_1).limit_denominator(100000000)
