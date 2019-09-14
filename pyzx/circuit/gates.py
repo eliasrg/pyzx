@@ -445,6 +445,31 @@ class CCZ(Tofolli):
                 CNOT(c1,t), T(c2), T(t), CNOT(c1,c2),T(c1),
                 T(c2,adjoint=True),CNOT(c1,c2)]
 
+class U3(Gate):
+    name = 'U3'
+    quippername = 'undefined'
+    qasm_name = 'u3'
+    qc_name = 'undefined'
+    def __init__(self, target, phases):
+        self.target = target
+        self.phases = phases
+        
+    def __eq__(self, other):
+        if len(self.phases) != 3 : return False
+        return True
+        
+    def to_basic_gates(self):
+        return [ZPhase(self.phases[2] - 1/2), XPhase(self.phases[1]), ZPhase(self.phases[0] + 1/2)]
+
+    def to_graph(self, g, labels, qs, rs):
+        self.graph_add_node(g,labels, qs,1,self.target,rs[self.target],self.phases[2] - 1/2)
+        rs[self.target] += 1
+        self.graph_add_node(g,labels, qs,2,self.target,rs[self.target],self.phases[1])
+        rs[self.target] += 1
+        self.graph_add_node(g,labels, qs,1,self.target,rs[self.target],self.phases[0] + 1/2)
+        rs[self.target] += 1
+        
+
 class Nonunitary(Gate):
     """A placeholder for any single-qubit nonunitary gate. Acts as a barrier
     for optimizations."""
@@ -487,6 +512,7 @@ gate_types = {
     "CCZ": CCZ,
     "InitAncilla": InitAncilla,
     "PostSelect": PostSelect,
+    "U3": U3,
     "Nonunitary": Nonunitary
 }
 
@@ -503,5 +529,6 @@ qasm_gate_table = {
     "cz": CZ,
     "ccx": Tofolli,
     "ccz": CCZ,
+    "u3": U3,
     "nonunitary": Nonunitary,
 }

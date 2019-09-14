@@ -20,7 +20,7 @@ import math
 from fractions import Fraction
 
 from . import Circuit
-from .gates import qasm_gate_table, ZPhase, XPhase
+from .gates import qasm_gate_table, ZPhase, XPhase, U3
 
 class QASMParser(object):
     """Class for parsing QASM source files into circuit descriptions."""
@@ -180,5 +180,48 @@ class QASMParser(object):
                 g = qasm_gate_table[name](ctrl1=argset[0],ctrl2=argset[1],target=argset[2])
                 gates.append(g)
                 continue
+
+            if name.startswith("u3"): 
+                i = name.find('(')
+                j = name.find(')')
+                comas = []
+                comas.append(name.find(','))
+                comas.append(name.find(',', comas[0] + 1))
+                if i == -1 or j == -1: raise TypeError("Invalid specification {}".format(name))
+                val_1 = name[i+1:comas[0]]
+                val_2 = name[comas[0]+1:comas[1]]
+                val_3 = name[comas[1]+1:j]
+                try:
+                    phase_1 = float(val_1)/math.pi
+                except ValueError:
+                    if val_1.find('pi') == -1: raise TypeError("Invalid specification {}".format(name))
+                    val_1 = val_1.replace('pi', '')
+                    val_1 = val_1.replace('*','')
+                    try: phase_1 = float(val_1)
+                    except: raise TypeError("Invalid specification {}".format(name))
+                try:
+                    phase_2 = float(val_2)/math.pi
+                except ValueError:
+                    if val_2.find('pi') == -1: raise TypeError("Invalid specification {}".format(name))
+                    val_2 = val_2.replace('pi', '')
+                    val_2 = val_2.replace('*','')
+                    try: phase_2 = float(val_2)
+                    except: raise TypeError("Invalid specification {}".format(name))
+                try:
+                    phase_3 = float(val_3)/math.pi
+                except ValueError:
+                    if val_3.find('pi') == -1: raise TypeError("Invalid specification {}".format(name))
+                    val_3 = val_3.replace('pi', '')
+                    val_3 = val_3.replace('*','')
+                    try: phase_3 = float(val_3)
+                    except: raise TypeError("Invalid specification {}".format(name))
+                phase_1 = Fraction(phase_1).limit_denominator(100000000)
+                phase_2 = Fraction(phase_2).limit_denominator(100000000)
+                phase_3 = Fraction(phase_3).limit_denominator(100000000)
+                phases = [phase_1, phase_2, phase_3]
+                g = U3(target=argset[0],phases=phases)   
+                gates.append(g)
+                continue
+
             raise TypeError("Unknown gate name: {}".format(c))
         return gates
